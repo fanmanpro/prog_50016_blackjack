@@ -42,16 +42,14 @@ func main() {
 	bgImg := render.NewImage()
 	bgImg.LoadImage("assets/bg.png")
 	bg := render.NewTexture(bgImg)
-	scene.NewGameObject(game.NewEntity()).
+	gameScene.NewGameObject(game.NewEntity()).
 		AddTransformComponent(&std.Vector3{0, 0, 1}, &std.Vector3{0, 0, 0}, &std.Vector3{10.24, 7.68, 1}).
 		AddMaterialComponent(bg)
 
 	// Static deck of cards
-	scene.NewGameObject(game.NewEntity()).
+	gameScene.NewGameObject(game.NewEntity()).
 		AddTransformComponent(&std.Vector3{-5, 5, 0}, &std.Vector3{0, 0, 0}, &std.Vector3{1.3, 2, 1}).
 		AddMaterialComponent(cb)
-
-	bj.Shuffle()
 
 	//NewGameObject(game.NewEntity()).
 	//	NewTransform(&std.Vector3{2, -4, 0}, &std.Vector3{0, 0, 0}, &std.Vector3{1.3, 2, 1}).
@@ -63,23 +61,43 @@ func main() {
 	kb.On(keyboard.KeySpace, func(action ...int) {
 		switch action[0] {
 		case keyboard.ActionPress:
-			bj.Deal()
-			gameScene.UpdateScene()
+			if bj.GameState() == blackjack.NewGame {
+				bj.Reset()
+				gameScene.ClearCards()
+
+				bj.Shuffle()
+				bj.Deal()
+				gameScene.UpdateCards()
+			} else if bj.GameState() == blackjack.Bust || bj.GameState() == blackjack.Won || bj.GameState() == blackjack.Lost {
+				bj.Reset()
+				gameScene.ClearCards()
+				bj.Shuffle()
+				bj.Deal()
+				gameScene.UpdateCards()
+			}
+			gameScene.UpdateGameState()
 		}
 	})
 
 	kb.On(keyboard.KeyLeft, func(action ...int) {
 		switch action[0] {
 		case keyboard.ActionPress:
-			bj.Stand()
+			if bj.GameState() == blackjack.Turn {
+				bj.Stand()
+				gameScene.UpdateCards()
+				gameScene.UpdateGameState()
+			}
 		}
 	})
 
 	kb.On(keyboard.KeyRight, func(action ...int) {
 		switch action[0] {
 		case keyboard.ActionPress:
-			bj.HitPlayer()
-			gameScene.UpdateScene()
+			if bj.GameState() == blackjack.Turn {
+				bj.HitPlayer()
+				gameScene.UpdateCards()
+				gameScene.UpdateGameState()
+			}
 		}
 	})
 

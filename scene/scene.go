@@ -1,4 +1,4 @@
-// This file's code is a factory/helper for scene management.
+// This package is a factory/helper for scene management.
 // Allows for more readable code and to easily track game state.
 
 package scene
@@ -13,80 +13,39 @@ import (
 	"../blackjack"
 )
 
-type GameObject struct {
-	entity *engine.Entity
-}
-
-func NewGameObject(e *engine.Entity) *GameObject {
-	return &GameObject{e}
-}
-
-func (g *GameObject) Entity() *engine.Entity {
-	return g.entity
-}
-
-func (g *GameObject) AddTransformComponent(p *std.Vector3, r *std.Vector3, s *std.Vector3) *GameObject {
-	t := std.NewTransform()
-	t.Set(p, r, s)
-	g.entity.AddComponent(t)
-	return g
-}
-
-func (g *GameObject) AddMaterialComponent(t *render.Texture) *GameObject {
-	m := render.NewMaterial()
-	m.Set(&std.Color{1, 1, 1, 1})
-	m.SetTexture(t)
-	g.entity.AddComponent(m)
-
-	q := render.NewMesh()
-	q.Set(std.QuadMesh)
-	g.entity.AddComponent(q)
-	return g
-}
-
-func (g *GameObject) AddCardComponent(id string, visible bool, cardBack *render.Texture) *GameObject {
-	i := render.NewImage()
-	i.LoadImage(fmt.Sprintf("assets/card_%v.png", id))
-	cardFront := render.NewTexture(i)
-
-	c := blackjack.NewCard(id, visible, cardFront, cardBack)
-	g.entity.AddComponent(c)
-
-	// Because the matieral is defined by which card it is, we are creating a empty material component first
-	m := render.NewMaterial()
-	m.Set(&std.Color{1, 1, 1, 1})
-	g.entity.AddComponent(m)
-
-	q := render.NewMesh()
-	q.Set(std.QuadMesh)
-	g.entity.AddComponent(q)
-
-	// Once all the components are ready, we update the material for rendering
-	c.UpdateMaterial()
-
-	return g
-}
-
 type Scene struct {
 	game      *engine.Engine
 	blackJack *blackjack.BlackJack
 	cardBack  *render.Texture
 
 	gameObjects map[string]*GameObject
+
+	newGameNotice *GameObject
+	turnNotice    *GameObject
+	wonNotice     *GameObject
+	lostNotice    *GameObject
+	bustNotice    *GameObject
 }
 
 func New(g *engine.Engine, bj *blackjack.BlackJack, cb *render.Texture) *Scene {
 	s := &Scene{game: g, blackJack: bj, cardBack: cb}
 	s.gameObjects = make(map[string]*GameObject, 0)
+
+	s.createNotices()
+	s.UpdateGameState()
 	return s
 }
 
+func (s *Scene) NewGameObject(e *engine.Entity) *GameObject {
+	return &GameObject{e}
+}
+
 // Updates the whole scene based on the state of the Black Jack game
-func (s *Scene) UpdateScene() {
+func (s *Scene) UpdateCards() {
 	playerHand, dealerHand := s.blackJack.Hands()
 	for idx, id := range playerHand {
 		if s.gameObjects[id] == nil {
-			s.gameObjects[id] = NewGameObject(s.game.NewEntity()).
+			s.gameObjects[id] = s.NewGameObject(s.game.NewEntity()).
 				AddTransformComponent(&std.Vector3{-1 + float32(idx), -5, float32(idx) * -0.05}, &std.Vector3{0, 0, 0}, &std.Vector3{1.3, 2, 1}).
 				AddCardComponent(id, true, s.cardBack)
 		}
@@ -97,10 +56,74 @@ func (s *Scene) UpdateScene() {
 			if idx == 0 {
 				visible = true
 			}
-			s.gameObjects[id] = NewGameObject(s.game.NewEntity()).
+			s.gameObjects[id] = s.NewGameObject(s.game.NewEntity()).
 				AddTransformComponent(&std.Vector3{1 + float32(idx), 5, float32(idx) * -0.05}, &std.Vector3{0, 0, 0}, &std.Vector3{1.3, 2, 1}).
 				AddCardComponent(id, visible, s.cardBack)
 		}
 	}
-	fmt.Println(playerHand, dealerHand)
+	fmt.Println(playerHand, dealerHand, s.blackJack.Deck())
+}
+
+func (s *Scene) UpdateGameState() {
+	gameState := s.blackJack.GameState()
+	switch gameState {
+	case blackjack.NewGame:
+		{
+			s.newGameNotice.Show()
+		}
+		break
+	case blackjack.Bust:
+		{
+			s.turnNotice.Hide()
+			s.bustNotice.Show()
+		}
+		break
+	case blackjack.Turn:
+		{
+			s.newGameNotice.Hide()
+			s.bustNotice.Hide()
+			s.wonNotice.Hide()
+			s.lostNotice.Hide()
+			s.turnNotice.Show()
+		}
+		break
+	case blackjack.Won:
+		{
+			s.turnNotice.Hide()
+			s.wonNotice.Show()
+		}
+		break
+	case blackjack.Lost:
+		{
+			s.turnNotice.Hide()
+			s.lostNotice.Show()
+		}
+		break
+	}
+}
+
+func (s *Scene) ClearCards() {
+	for _, gameObject := range s.gameObjects {
+		s.game.DeleteEntity(gameObject.entity)
+	}
+	s.gameObjects = make(map[string]*GameObject, 0)
+}
+
+func (s *Scene) createNotices() {
+	s.newGameNotice = s.createNotice("assets/newgame.png")
+	s.turnNotice = s.createNotice("assets/turn.png")
+	s.bustNotice = s.createNotice("assets/bust.png")
+	s.wonNotice = s.createNotice("assets/won.png")
+	s.lostNotice = s.createNotice("assets/lost.png")
+}
+
+func (s *Scene) createNotice(texturePath string) *GameObject {
+	i := render.NewImage()
+	i.LoadImage(texturePath)
+	t := render.NewTexture(i)
+
+	return s.NewGameObject(s.game.NewEntity()).
+		Hide().
+		AddTransformComponent(&std.Vector3{0, 0, 1}, &std.Vector3{0, 0, 0}, &std.Vector3{6, 1.5, 1}).
+		AddMaterialComponent(t)
 }
