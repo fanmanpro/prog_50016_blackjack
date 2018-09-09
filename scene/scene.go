@@ -14,7 +14,9 @@ import (
 type Scene struct {
 	game      *engine.Engine
 	blackJack *blackjack.BlackJack
+
 	cardBack  *render.Texture
+	cardSheet *render.Image
 
 	gameObjects map[string]*GameObject
 
@@ -25,14 +27,26 @@ type Scene struct {
 	bustNotice    *GameObject
 }
 
-func New(g *engine.Engine, bj *blackjack.BlackJack, cb *render.Texture) *Scene {
-	s := &Scene{game: g, blackJack: bj, cardBack: cb}
+func New(g *engine.Engine, bj *blackjack.BlackJack) *Scene {
+	s := &Scene{game: g, blackJack: bj}
 	s.gameObjects = make(map[string]*GameObject, 0)
 
-	// Background
+	// Back of a card texture
+	cbImg := render.NewImage()
+	cbImg.LoadImage("assets/card_back.png")
+	s.cardBack = render.NewTexture(cbImg)
+
+	// Sprite sheet of all cards
+	ssImg := render.NewImage()
+	ssImg.LoadImage("assets/card_sheet.png")
+	s.cardSheet = ssImg
+
+	// Background texture
 	bgImg := render.NewImage()
 	bgImg.LoadImage("assets/bg.png")
 	bg := render.NewTexture(bgImg)
+
+	// Background
 	s.NewGameObject(g.NewEntity()).
 		AddTransformComponent(&std.Vector3{0, 0, 1}, &std.Vector3{0, 0, 0}, &std.Vector3{10.24, 7.68, 1}).
 		AddMaterialComponent(bg)
@@ -40,7 +54,7 @@ func New(g *engine.Engine, bj *blackjack.BlackJack, cb *render.Texture) *Scene {
 	// Static deck of cards
 	s.NewGameObject(g.NewEntity()).
 		AddTransformComponent(&std.Vector3{-5.12, 4.8, 0}, &std.Vector3{0, 0, 0}, &std.Vector3{1.8, 2.7, 1}).
-		AddMaterialComponent(cb)
+		AddMaterialComponent(s.cardBack)
 
 	s.createNotices()
 	s.UpdateGameState()
@@ -58,7 +72,7 @@ func (s *Scene) UpdateCards() {
 		if s.gameObjects[id] == nil {
 			s.gameObjects[id] = s.NewGameObject(s.game.NewEntity()).
 				AddTransformComponent(&std.Vector3{0 + float32(idx), -4.8, float32(idx) * -0.05}, &std.Vector3{0, 0, 0}, &std.Vector3{1.8, 2.7, 1}).
-				AddCardComponent(id, true, s.cardBack)
+				AddCardComponent(id, true, s.cardSheet)
 		}
 	}
 	for idx, id := range dealerHand {
@@ -69,7 +83,7 @@ func (s *Scene) UpdateCards() {
 			}
 			s.gameObjects[id] = s.NewGameObject(s.game.NewEntity()).
 				AddTransformComponent(&std.Vector3{1.3 + float32(idx), 4.8, float32(idx) * -0.05}, &std.Vector3{0, 0, 0}, &std.Vector3{1.8, 2.7, 1}).
-				AddCardComponent(id, visible, s.cardBack)
+				AddCardComponent(id, visible, s.cardSheet)
 		}
 	}
 }

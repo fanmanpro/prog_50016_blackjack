@@ -3,8 +3,6 @@ package blackjack
 import (
 	"math/rand"
 	"time"
-
-	"github.com/autovelop/playthos/render"
 )
 
 type GameState int
@@ -19,11 +17,10 @@ const (
 )
 
 type BlackJack struct {
-	busted   bool
-	player   []string
-	dealer   []string
-	deck     []string
-	cardBack *render.Texture
+	busted bool
+	player []string
+	dealer []string
+	deck   []string
 
 	gameState GameState
 }
@@ -95,7 +92,7 @@ func (b *BlackJack) HitPlayer() {
 func (b *BlackJack) Deal() {
 	b.HitPlayer()
 	b.HitDealer()
-	b.HitPlayer()
+	// b.HitPlayer()
 	b.HitDealer()
 	b.updateGameState(Turn)
 }

@@ -4,7 +4,6 @@ import (
 	// engine & systems
 	"github.com/autovelop/playthos"
 	"github.com/autovelop/playthos/keyboard"
-	"github.com/autovelop/playthos/render"
 
 	// engine systems & platforms that produce init side effects
 	_ "github.com/autovelop/playthos/glfw"
@@ -38,16 +37,11 @@ func main() {
 
 	kb := game.Listener(&keyboard.Keyboard{})
 
-	// Back of a card texture
-	cbImg := render.NewImage()
-	cbImg.LoadImage("assets/card_back.png")
-	cb := render.NewTexture(cbImg)
-
 	// Empty Black Jack game
 	bj := blackjack.New()
 
 	// Empty scene with reference to Black Jack
-	gameScene := scene.New(game, bj, cb)
+	gameScene := scene.New(game, bj)
 
 	kb.On(keyboard.KeySpace, func(action ...int) {
 		switch action[0] {

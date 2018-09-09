@@ -1,8 +1,6 @@
 package scene
 
 import (
-	"fmt"
-
 	"github.com/autovelop/playthos"
 	"github.com/autovelop/playthos/render"
 	"github.com/autovelop/playthos/std"
@@ -47,18 +45,22 @@ func (g *GameObject) AddMaterialComponent(t *render.Texture) *GameObject {
 	return g
 }
 
-func (g *GameObject) AddCardComponent(id string, visible bool, cardBack *render.Texture) *GameObject {
-	i := render.NewImage()
-	i.LoadImage(fmt.Sprintf("assets/card_%v.png", id))
-	cardFront := render.NewTexture(i)
-
-	c := blackjack.NewCard(id, visible, cardFront, cardBack)
-	g.entity.AddComponent(c)
+func (g *GameObject) AddCardComponent(id string, visible bool, cardSheet *render.Image) *GameObject {
+	// i := render.NewImage()
+	// i.LoadImage(fmt.Sprintf("assets/card_%v.png", id))
+	// cardFront := render.NewTexture(i)
 
 	// Because the matieral is defined by which card it is, we are creating a empty material component first
 	m := render.NewMaterial()
 	m.Set(&std.Color{1, 1, 1, 1})
+	t := render.NewTexture(cardSheet)
+	t.SetTiling(&std.Vector2{11, 5}) // means spritesheet is split into 11 columns and 5 rows
+	t.SetOffset(&std.Vector2{0, 0})
+	m.SetTexture(t)
 	g.entity.AddComponent(m)
+
+	c := blackjack.NewCard(id, visible, t)
+	g.entity.AddComponent(c)
 
 	q := render.NewMesh()
 	q.Set(std.QuadMesh)
