@@ -5,7 +5,6 @@ import (
 	"github.com/autovelop/playthos"
 	"github.com/autovelop/playthos/keyboard"
 	"github.com/autovelop/playthos/render"
-	"github.com/autovelop/playthos/std"
 
 	// engine systems & platforms that produce init side effects
 	_ "github.com/autovelop/playthos/glfw"
@@ -37,26 +36,6 @@ func main() {
 
 	// Empty scene with reference to Black Jack
 	gameScene := scene.New(game, bj, cb)
-
-	// Background
-	bgImg := render.NewImage()
-	bgImg.LoadImage("assets/bg.png")
-	bg := render.NewTexture(bgImg)
-	gameScene.NewGameObject(game.NewEntity()).
-		AddTransformComponent(&std.Vector3{0, 0, 1}, &std.Vector3{0, 0, 0}, &std.Vector3{10.24, 7.68, 1}).
-		AddMaterialComponent(bg)
-
-	// Static deck of cards
-	gameScene.NewGameObject(game.NewEntity()).
-		AddTransformComponent(&std.Vector3{-5, 5, 0}, &std.Vector3{0, 0, 0}, &std.Vector3{1.3, 2, 1}).
-		AddMaterialComponent(cb)
-
-	//NewGameObject(game.NewEntity()).
-	//	NewTransform(&std.Vector3{2, -4, 0}, &std.Vector3{0, 0, 0}, &std.Vector3{1.3, 2, 1}).
-	//	NewMaterial("background.png", &std.Color{1, 1, 1, 1})
-	//NewGameObject(game.NewEntity()).
-	//	NewTransform(&std.Vector3{-2, -4, 0}, &std.Vector3{0, 0, 0}, &std.Vector3{1.3, 2, 1}).
-	//	NewMaterial("background.png", &std.Color{1, 1, 1, 1})
 
 	kb.On(keyboard.KeySpace, func(action ...int) {
 		switch action[0] {

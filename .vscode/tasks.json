@@ -14,6 +14,18 @@
             "options": {
                 "cwd": "${workspaceRoot}"
             }
+        },
+        {
+            "label": "deploy",
+            "type": "shell",
+            "command": "go run -tags='opengl glfw render keyboard deploy' game.go",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "options": {
+                "cwd": "${workspaceRoot}"
+            }
         }
     ]
 }
