@@ -7,7 +7,7 @@ import (
 	"github.com/autovelop/playthos/render"
 	"github.com/autovelop/playthos/std"
 
-	"../blackjack"
+	"github.com/fanus/prog_50016_blackjack/blackjack"
 )
 
 type GameObject struct {

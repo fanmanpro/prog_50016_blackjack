@@ -12,8 +12,8 @@ import (
 	_ "github.com/autovelop/playthos/opengl"
 	_ "github.com/autovelop/playthos/platforms/windows"
 
-	"./blackjack"
-	"./scene"
+	"github.com/fanus/prog_50016_blackjack/blackjack"
+	"github.com/fanus/prog_50016_blackjack/scene"
 )
 
 func main() {
@@ -23,6 +23,18 @@ func main() {
 		768,
 		false,
 	})
+
+	// music := game.NewEntity()
+	// sound := audio.NewSound()
+	// clip := audio.NewClip()
+	// clip.LoadClip("assets/music.wav")
+	// sound.Set(clip)
+	// music.AddComponent(sound)
+
+	// src := audio.NewSource()
+	// src.Set(&std.Vector3{0, 0, 0}, false, true)
+	// src.PlaySound(sound)
+	// music.AddComponent(src)
 
 	kb := game.Listener(&keyboard.Keyboard{})
 
