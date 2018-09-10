@@ -6,14 +6,14 @@ import (
 	"github.com/autovelop/playthos/keyboard"
 
 	// engine systems & platforms that produce init side effects
-	_ "github.com/autovelop/playthos/glfw"
-	_ "github.com/autovelop/playthos/glfw/keyboard"
-	_ "github.com/autovelop/playthos/opengl"
-	_ "github.com/autovelop/playthos/platforms/windows"
+	// _ "github.com/autovelop/playthos/glfw"
+	// _ "github.com/autovelop/playthos/glfw/keyboard"
+	// _ "github.com/autovelop/playthos/opengl"
+	// _ "github.com/autovelop/playthos/platforms/windows"
 
 	// FOR WEB DEPLOY
-	// _ "github.com/autovelop/playthos/platforms/web"
-	// _ "github.com/autovelop/playthos/webgl"
+	_ "github.com/autovelop/playthos/platforms/web"
+	_ "github.com/autovelop/playthos/webgl"
 
 	"github.com/fanus/prog_50016_blackjack/blackjack"
 	"github.com/fanus/prog_50016_blackjack/scene"
