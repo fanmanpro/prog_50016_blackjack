@@ -6,14 +6,14 @@ import (
 	"github.com/autovelop/playthos/keyboard"
 
 	// engine systems & platforms that produce init side effects
-	// _ "github.com/autovelop/playthos/glfw"
-	// _ "github.com/autovelop/playthos/glfw/keyboard"
-	// _ "github.com/autovelop/playthos/opengl"
-	// _ "github.com/autovelop/playthos/platforms/windows"
+	_ "github.com/autovelop/playthos/glfw"
+	_ "github.com/autovelop/playthos/glfw/keyboard"
+	_ "github.com/autovelop/playthos/opengl"
+	_ "github.com/autovelop/playthos/platforms/windows"
 
 	// FOR WEB DEPLOY
-	_ "github.com/autovelop/playthos/platforms/web"
-	_ "github.com/autovelop/playthos/webgl"
+	// _ "github.com/autovelop/playthos/platforms/web"
+	// _ "github.com/autovelop/playthos/webgl"
 
 	"github.com/fanus/prog_50016_blackjack/blackjack"
 	"github.com/fanus/prog_50016_blackjack/scene"
@@ -21,23 +21,11 @@ import (
 
 func main() {
 	game := engine.New("BlackJack", &engine.Settings{
-		false,
+		true, // fullscreen
 		1024,
 		768,
 		false,
 	})
-
-	// music := game.NewEntity()
-	// sound := audio.NewSound()
-	// clip := audio.NewClip()
-	// clip.LoadClip("assets/music.wav")
-	// sound.Set(clip)
-	// music.AddComponent(sound)
-
-	// src := audio.NewSource()
-	// src.Set(&std.Vector3{0, 0, 0}, false, true)
-	// src.PlaySound(sound)
-	// music.AddComponent(src)
 
 	kb := game.Listener(&keyboard.Keyboard{})
 

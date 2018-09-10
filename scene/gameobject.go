@@ -46,10 +46,6 @@ func (g *GameObject) AddMaterialComponent(t *render.Texture) *GameObject {
 }
 
 func (g *GameObject) AddCardComponent(id string, visible bool, cardSheet *render.Image) *GameObject {
-	// i := render.NewImage()
-	// i.LoadImage(fmt.Sprintf("assets/card_%v.png", id))
-	// cardFront := render.NewTexture(i)
-
 	// Because the matieral is defined by which card it is, we are creating a empty material component first
 	m := render.NewMaterial()
 	m.Set(&std.Color{1, 1, 1, 1})

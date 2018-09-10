@@ -15,7 +15,7 @@ type Scene struct {
 	game      *engine.Engine
 	blackJack *blackjack.BlackJack
 
-	cardBack  *render.Texture
+	// cardBack  *render.Texture
 	cardSheet *render.Image
 
 	gameObjects map[string]*GameObject
@@ -32,9 +32,9 @@ func New(g *engine.Engine, bj *blackjack.BlackJack) *Scene {
 	s.gameObjects = make(map[string]*GameObject, 0)
 
 	// Back of a card texture
-	cbImg := render.NewImage()
-	cbImg.LoadImage("assets/card_back.png")
-	s.cardBack = render.NewTexture(cbImg)
+	// cbImg := render.NewImage()
+	// cbImg.LoadImage("assets/card_back.png")
+	// s.cardBack = render.NewTexture(cbImg)
 
 	// Sprite sheet of all cards
 	ssImg := render.NewImage()
@@ -52,9 +52,12 @@ func New(g *engine.Engine, bj *blackjack.BlackJack) *Scene {
 		AddMaterialComponent(bg)
 
 	// Static deck of cards
+	backTexture := render.NewTexture(ssImg)
+	backTexture.SetTiling(&std.Vector2{11, 5}) // means spritesheet is split into 11 columns and 5 rows
+	backTexture.SetOffset(&std.Vector2{0, 0})
 	s.NewGameObject(g.NewEntity()).
 		AddTransformComponent(&std.Vector3{-5.12, 4.8, 0}, &std.Vector3{0, 0, 0}, &std.Vector3{1.8, 2.7, 1}).
-		AddMaterialComponent(s.cardBack)
+		AddMaterialComponent(backTexture)
 
 	s.createNotices()
 	s.UpdateGameState()
