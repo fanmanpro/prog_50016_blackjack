@@ -83,6 +83,7 @@ func (b *BlackJack) HitPlayer() {
 
 	score := b.calcScore(b.player)
 	if score > 21 {
+
 		b.Bust()
 	} else if score == 21 {
 		b.Stand()
@@ -92,7 +93,7 @@ func (b *BlackJack) HitPlayer() {
 func (b *BlackJack) Deal() {
 	b.HitPlayer()
 	b.HitDealer()
-	// b.HitPlayer()
+	b.HitPlayer()
 	b.HitDealer()
 	b.updateGameState(Turn)
 }
@@ -130,6 +131,11 @@ func (b *BlackJack) calcScore(hand []string) int {
 			aceCount++
 		}
 		score += cardDefinitions[card].Score
+	}
+	for a := 0; a < aceCount; a++ {
+		if score > 21 {
+			score -= 10
+		}
 	}
 	return score
 }

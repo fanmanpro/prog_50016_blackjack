@@ -18,7 +18,7 @@
         {
             "label": "deploy",
             "type": "shell",
-            "command": "go run -tags='opengl glfw render keyboard windows web deploy' game.go",
+            "command": "go run -tags='opengl glfw render keyboard deploy' game.go",
             "group": {
                 "kind": "build",
                 "isDefault": true
